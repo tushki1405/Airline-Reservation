@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="style/Site.css">
+    <link rel="stylesheet" href="style/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="style/toastr.min.css">
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <!--<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="scripts/moment.min.js"></script>
+    <script type="text/javascript" src="scripts/Airlines.js"></script>
+    <script type="text/javascript" src="scripts/toastr.min.js"></script>
+    <title>Airline Reservation</title>
+</head>
+
+<body>
+    <div ng-app="angularApp" ng-controller="airlineController">
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" ng-click="showHome()" href="#">Airline Reservation System</a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a ng-click="showAirlines()" href="#">Airlines</a></li>
+                        <li><a ng-click="showSchedule()" href="#">Airline Schedule</a></li>
+                        <li><a ng-click="showReservations()" href="#">Reservations</a></li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </nav>
+        <!-- div for home -->
+        <div ng-show="divHome">
+            <div style="margin-left: 10px;">
+                <h2>Airline Reservation System</h2>
+                <h4>Please select options from Navigation Bar:
+                </h4>
+                <ul>
+                    <li><b>Airlines:</b> Add new Airline and view existing airlines (Ticket prices, number of seats) </li>
+                    <li><b>Airline Schedule:</b> View existing Schedules and add new flight plans for airlines 
+                        (Departure-Arrival Airports, Time of flight) </li>
+                    <li><b>Reservations:</b> View all available flights and reserve seats on the flight.</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <!-- Div for showing airline details -->
+        <div ng-show="divAirlines">
+            <div class="row" style="width: 90%; margin-left: 5px;">
+                <div class="col-md-4">
+                    <div>
+                        <h4>Add Details for New Airline</h4>
+                        <form>
+                            <div class="form-group">
+                                <label>Airline Code</label>
+                                <input type="text" class="form-control" ng-model="inp_airCode" placeholder="Enter Airline Code" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Price (Economy)</label>
+                                <input type="number" class="form-control" ng-model="inp_airPE" placeholder="Enter Price (Economy)" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Price (First-Class)</label>
+                                <input type="number" class="form-control" ng-model="inp_airPF" placeholder="Enter Price (First-Class)" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Seats (Economy)</label>
+                                <input type="number" class="form-control" ng-model="inp_airSE" placeholder="Enter Seats (Economy)" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Seats (First-Class)</label>
+                                <input type="number" class="form-control" ng-model="inp_airSF" placeholder="Enter Seats (First-Class)" required>
+                            </div>
+                            <div class="form-group tableCenter">
+                                <button class="btn btn-success" ng-click="AddAirline()">
+                                    <!--<span class="glyphicon glyphicon-save"></span>-->
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <table class="table table-striped table-bordered">
+                        <tr>
+                            <!--<th>ID</th>-->
+                            <th>Airline Code</th>
+                            <th>Price (Economy)</th>
+                            <th>Price (First-Class)</th>
+                            <th>Seats (Economy)</th>
+                            <th>Seats (First-Class)</th>
+                        </tr>
+                        <tr ng-repeat="x in dataAirlines">
+                            <!--<td class="tableCenter">{{ x.AirplaneID }}</td>-->
+                            <td>{{ x.AirplaneCode }}</td>
+                            <td class="tableCenter">{{ x.Price_Economy | currency }}</td>
+                            <td class="tableCenter">{{ x.Price_FirstClass | currency }}</td>
+                            <td class="tableCenter">{{ x.Seats_Economy }}</td>
+                            <td class="tableCenter">{{ x.Seats_FirstClass }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Div for showing ading new airline -->
+        <div ng-show="divSchedule">
+            <div class="row" style="width: 90%; margin-left: 5px;">
+                <div class="col-md-4">
+                    <div>
+                        <h4>Add Schedule for Airline</h4>
+                        <form>
+                            <div class="form-group">
+                                <label>Airline</label>
+                                <select class="form-control" ng-model="AirplaneID">
+                                    <option ng-repeat="x in airCodes" value="{{x.AirplaneID}}">{{x.AirplaneCode}}</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Departure Airport</label>
+                                <input type="text" class="form-control" ng-model="inp_airDep" placeholder="Enter Departure Airport" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Arrival Airport</label>
+                                <input type="text" class="form-control" ng-model="inp_airArr" placeholder="Enter Arrival Airport" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Departure Date</label>
+                                <!--<input type="number" class="form-control" ng-model="inp_airDepDate" placeholder="Enter Departure Date" required>-->
+                                <!-- Datetime picker -->
+                                <div class='input-group date' id='datetimepicker1'>
+                                    <input type='text' class="form-control" ng-model="inp_airDepDate" placeholder="Enter Departure Date and Time" />
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                                <script type="text/javascript">
+                                    $(function () {
+                                        $('#datetimepicker1').datetimepicker();
+                                    });
+                                </script>
+                            </div>
+                            <div class="form-group">
+                                <label>Arrival Date</label>
+                                <!--<input type="number" class="form-control" ng-model="inp_airArrDate" placeholder="Enter Arrival Date" required>-->
+                                <!-- Datetime picker -->
+                                <div class='input-group date' id='datetimepicker2'>
+                                    <input type='text' class="form-control" ng-model="inp_airArrDate" placeholder="Enter Arrival Date and Time" />
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar" /></span>
+                                    </span>
+                                </div>
+                                <script type="text/javascript">
+                                    $(function () {
+                                        $('#datetimepicker2').datetimepicker();
+                                    });
+                                </script>
+
+                            </div>
+                            <div class="form-group tableCenter">
+                                <button class="btn btn-success" ng-click="AddSchedule()">
+                                    <!--<span class="glyphicon glyphicon-save"></span>-->
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <table class="table table-striped table-bordered">
+                        <tr>
+                            <!--<th>ID</th>-->
+                            <th>Airline Code</th>
+                            <th>Departure Airport</th>
+                            <th>Arrival Airport</th>
+                            <th>Departure Date</th>
+                            <th>Arrival Date</th>
+                        </tr>
+                        <tr ng-repeat="x in dataSchedule">
+                            <!--<td class="tableCenter">{{ x.AirplaneID }}</td>-->
+                            <td>{{ x.AirplaneCode }}</td>
+                            <td>{{ x.Airport_Departure }}</td>
+                            <td>{{ x.Airport_Arrival}}</td>
+                            <td>{{ x.Time_Departure }}</td>
+                            <td>{{ x.Time_Arrival }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!--- Div for showing reservations -->
+        <div ng-show="divReservation">
+            <div class="row" style="width: 90%; margin-left: 5px;">
+                <h4 style="margin-left: 20px;">Available Flights</h4>
+                <div class="col-md-8">
+                    <div style="height:80vh; overflow-x:hidden; overflow-y:scroll;">
+                        <table class="table table-striped table-hover" style="border-spacing: 0px 5px; border-collapse: separate;">
+                            <tr ng-repeat="x in dataReservation" class="info">
+                                <td>
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <div class="row">
+                                                <div class="col-md-4"><b>Airline Code:</b> {{ x.AirplaneCode }}</div>
+                                                <div class="col-md-4"><b>Departure:</b> {{ x.Airport_Departure }}</div>
+                                                <div class="col-md-4"><b>Arrival:</b> {{ x.Airport_Arrival}}</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6"><b>Departure Time:</b> {{ x.Time_Departure }}</div>
+                                                <div class="col-md-6"><b>Arrival Time:</b> {{ x.Time_Arrival }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button class="btn btn-success btn-block" type="submit" ng-click="showSeats(x.ScheduleID)" style="height: 80px; white-space: normal;">Reserve Seats</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div ng-show="divSeats">
+                        <form>
+                            <div>
+                                <h4>Enter Reservation Details</h4>
+                                <div class="form-group">
+                                    <label>Name</label>
+                                    <input type="text" class="form-control" ng-model="inp_name" placeholder="Enter Name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Age</label>
+                                    <input type="number" class="form-control" ng-model="inp_age" placeholder="Enter Age" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email Address</label>
+                                    <input type="email" class="form-control" ng-model="inp_email" placeholder="Enter Email Address" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Select a Seat</label>
+
+                                    <div style="padding: 0px 15px 10px 15px;">
+                                        <!--                                        <div class="row seats">
+                                            <div class="col-md-1">A</div>
+                                            <div class="col-md-1">B</div>
+                                            <div class="col-md-1">C</div>
+                                            <div class="col-md-1">D</div>
+                                            <div class="col-md-1">E</div>
+                                            <div class="col-md-1">F</div>
+                                            <div class="col-md-1">G</div>
+                                            <div class="col-md-1">H</div>
+                                            <div class="col-md-1">I</div>
+                                            <div class="col-md-1">J</div>
+                                            <div class="col-md-1">K</div>
+                                            <div class="col-md-1">L</div>
+                                        </div>-->
+                                        <div class="row seats">
+                                            <div ng-repeat="x in dataSeats | orderBy : 'SeatID' : true" class="col-md-2"
+                                                ng-class="{green: x.CurrentStatus == 0, red: x.CurrentStatus != 0, yellow: x.SeatID==SeatSelected}"
+                                                ng-click="SelectThisSeat(x.SeatID,x.CurrentStatus)">
+                                                {{($index+1) + "-" + x.SeatType}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-success btn-block" ng-click="ReserveSeat()">Reserve</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-bottom-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+    </script>
+</body>
+</html>
