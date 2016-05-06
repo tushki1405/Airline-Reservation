@@ -20,19 +20,19 @@ Technologies Used:
 ####Steps to run the website:
 
 1. Set up database
-	a. open sql query window. Copy contents from file Database\AirlineQueries.sql -> execute
-	b. Copy contents from file Database\AirLineData.sql -> execute
+  1. open sql query window. Copy contents from file Database\AirlineQueries.sql -> execute
+  2. Copy contents from file Database\AirLineData.sql -> execute
 
 2. Set up Service
-	a. Open solution in folder Source Code\AirlineReservation
-	b. Open web config and search for "Update Connection". Update database connection string here
-	c. run the solution
-	d. copy the URL when browser window opens
+  1. Open solution in folder Source Code\AirlineReservation
+  2. Open web config and search for "Update Connection". Update database connection string here
+  3. run the solution
+  4. copy the URL when browser window opens
 
 3. Run the website
-	a. Navigate to folder Website\Scripts
-	b. Open Airlines.js in notepad
-	c. Update url in CONFIG section with URL copied in step 2.d
-	d. Navigate to Website\ and open Default.html
+  1. Navigate to folder Website\Scripts
+  2. Open Airlines.js in notepad
+  3. Update url in CONFIG section with URL copied in step 2.d
+  4. Navigate to Website\ and open Default.html
 
 
